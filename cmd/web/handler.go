@@ -6,7 +6,33 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"os"
 )
+
+type noDirFS struct {
+	fs http.Dir
+}
+
+func (ndfs noDirFS) Open(name string) (http.File, error) {
+	f, err := ndfs.fs.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	
+	fileInfo, err := f.Stat()
+	if err != nil {
+		f.Close()
+		return nil, err
+	}
+
+	if fileInfo.IsDir() {
+		f.Close()
+		return nil, os.ErrNotExist
+	}
+
+	return f, nil
+}
+
 
 func home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
