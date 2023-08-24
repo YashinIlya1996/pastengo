@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"os"
+	"path/filepath"
 )
 
 type noDirFS struct {
@@ -19,18 +19,27 @@ func (ndfs noDirFS) Open(name string) (http.File, error) {
 		return nil, err
 	}
 	
-	fileInfo, err := f.Stat()
+    s, err := f.Stat()
 	if err != nil {
-		f.Close()
+		closeErr := f.Close()
+		if closeErr != nil {
+			return nil, closeErr
+		}
 		return nil, err
 	}
 
-	if fileInfo.IsDir() {
-		f.Close()
-		return nil, os.ErrNotExist
-	}
+    if s.IsDir() {
+        index := filepath.Join(name, "index.html")
+        if _, err := ndfs.fs.Open(index); err != nil {
+            closeErr := f.Close()
+            if closeErr != nil {
+                return nil, closeErr
+            }
+            return nil, err
+        }
+    }
 
-	return f, nil
+    return f, nil
 }
 
 
