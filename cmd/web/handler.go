@@ -10,7 +10,7 @@ import (
 )
 
 type noDirFS struct {
-	fs http.Dir
+	fs http.FileSystem
 }
 
 func (ndfs noDirFS) Open(name string) (http.File, error) {
