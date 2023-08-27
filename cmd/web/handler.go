@@ -84,9 +84,6 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
 
-		// w.WriteHeader(http.StatusMethodNotAllowed)
-		// w.Write([]byte(http.StatusText(http.StatusMethodNotAllowed)))
-		// or instead
 		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
