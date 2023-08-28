@@ -19,3 +19,18 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
+
+func (app *application) render(w http.ResponseWriter, status int, name string, data *templateData) {
+	ts, ok := app.templateCache[name]
+	if !ok {
+		err := fmt.Errorf("template %s does not exists", name)
+		app.errorLog.Print(err)
+		app.serverError(w, err)
+	}
+
+	w.WriteHeader(status)
+	err := ts.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		app.serverError(w, err)
+	}
+}
