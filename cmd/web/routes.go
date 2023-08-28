@@ -15,4 +15,4 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/snippet/create/", app.snippetCreate)
 
 	return mux
-} 
+}
