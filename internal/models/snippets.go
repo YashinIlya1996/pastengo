@@ -22,7 +22,7 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 	var userId int
 	stmt := `
 	insert into snippets (title, content, expires) 
-	values ($1, $2, now() + interbal '$3 days')
+	values ($1, $2, now() + interval '$3 days')
 	returning ID;
 	`
 	err := m.DB.QueryRow(stmt, title, content, expires).Scan(&userId)
